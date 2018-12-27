@@ -1,45 +1,66 @@
 import React, { Component } from 'react';
-import { Text, AppRegistry, Button, StyleSheet, View } from 'react-native';
-import Ball from './models/ball.js';
-import Stick from './models/stick.js';
+import { Player } from 'video-react';
+import {
+  Button, Form, FormGroup,
+  Label, Input, Col
+} from 'reactstrap';
 
-export default class HitTheBall extends Component {
-       
-       daf(){
-        return (
-          <View style={styles.container}>
-          <Ball position={this.state}></Ball>      
-          <Stick position={styles.rectangle}></Stick>
-           </View>
-            );
+export default class PlayerExample extends Component {
+  constructor(props, context) {
+    super(props, context);
+
+    this.state = {
+      playerSource: 'https://media.w3.org/2010/05/sintel/trailer_hd.mp4',
+      inputVideoUrl: 'http://www.w3schools.com/html/mov_bbb.mp4'
     }
 
- constructor(props) {
-  super(props);
-  this.state = { styles : { top: 0, left: 40 }, direction : 1 };
+    this.handleValueChange = this.handleValueChange.bind(this);
+    this.updatePlayerInfo = this.updatePlayerInfo.bind(this);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.playerSource != prevState.playerSource) {
+      this.refs.player.load();
     }
-    
+  }
+
+  handleValueChange(e) {
+    var value = e.target.value;
+    this.setState({
+      [e.target.id]: value
+    });
+  }
+
+  updatePlayerInfo() {
+    this.setState({
+      playerSource: this.state.inputVideoUrl
+    });
+  }
+
   render() {
     return (
-      this.daf()
+      <div>
+        <Player ref="player" videoId="video-1">
+          <source src={this.state.playerSource} />
+        </Player>
+        <div className="docs-example">
+          <Form>
+            <FormGroup>
+              <Label for="inputVideoUrl">Video Url</Label>
+              <Input
+                ref="inputVideoUrl"
+                name="inputVideoUrl"
+                id="inputVideoUrl"
+                value={this.state.inputVideoUrl}
+                onChange={this.handleValueChange}
+              />
+            </FormGroup>
+            <FormGroup>
+              <Button type="button" onClick={this.updatePlayerInfo}>Update</Button>
+            </FormGroup>
+          </Form>
+        </div>
+      </div>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-   flex: 1,
-   justifyContent: 'center',
-  },
-rectangle: {
-    top: 10,
-    left: 40,
-    width: 300,
-    height: 10,
-    backgroundColor: 'black',
-  transform: [{ rotate: '20deg'}],
-}
-});
-
-// skip this line if using Create React Native App
-AppRegistry.registerComponent('HitTheBall', () => HitTheBall);
